@@ -1,0 +1,218 @@
+/*
+Niniejszy program jest wolnym oprogramowaniem; możesz go
+rozprowadzać dalej i / lub modyfikować na warunkach Powszechnej
+Licencji Publicznej GNU, wydanej przez Fundację Wolnego
+Oprogramowania - według wersji 2 tej Licencji lub(według twojego
+wyboru) którejś z późniejszych wersji.
+
+Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on
+użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej
+gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH
+ZASTOSOWAŃ.W celu uzyskania bliższych informacji sięgnij do
+Powszechnej Licencji Publicznej GNU.
+
+Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz
+Powszechnej Licencji Publicznej GNU(GNU General Public License);
+jeśli nie - napisz do Free Software Foundation, Inc., 59 Temple
+Place, Fifth Floor, Boston, MA  02110 - 1301  USA
+*/
+
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_SWIZZLE
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <stdlib.h>
+#include <stdio.h>
+#include "constants.h"
+#include "lodepng.h"
+#include "shaderprogram.h"
+#include "myCube.h"
+#include "myAquarium.h"
+#include "myTeapot.h"
+
+float speed_x=0;
+float speed_y=0;
+float aspectRatio=1;
+float zoom = -8.0;
+
+ShaderProgram *sp;
+GLuint tex; //Uchwyt – deklaracja globalna
+
+
+GLuint readTexture(const char* filename) {
+	GLuint tex;
+	glActiveTexture(GL_TEXTURE0);
+
+	//Wczytanie do pamięci komputera
+	std::vector<unsigned char> image;   //Alokuj wektor do wczytania obrazka
+	unsigned width, height;   //Zmienne do których wczytamy wymiary obrazka
+	//Wczytaj obrazek
+	unsigned error = lodepng::decode(image, width, height, filename);
+
+	//Import do pamięci karty graficznej
+	glGenTextures(1, &tex); //Zainicjuj jeden uchwyt
+	glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
+	//Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
+	glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+		GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)image.data());
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	return tex;
+}
+
+//Procedura obsługi błędów
+void error_callback(int error, const char* description) {
+	fputs(description, stderr);
+}
+
+void keyCallback(GLFWwindow* window,int key,int scancode,int action,int mods) {
+    if (action==GLFW_PRESS) {
+        if (key==GLFW_KEY_LEFT) speed_x=-PI/2;
+        if (key==GLFW_KEY_RIGHT) speed_x=PI/2;
+        if (key==GLFW_KEY_UP) speed_y=PI/2;
+        if (key==GLFW_KEY_DOWN) speed_y=-PI/2;
+    }
+    if (action==GLFW_RELEASE) {
+        if (key==GLFW_KEY_LEFT) speed_x=0;
+        if (key==GLFW_KEY_RIGHT) speed_x=0;
+        if (key==GLFW_KEY_UP) speed_y=0;
+        if (key==GLFW_KEY_DOWN) speed_y=0;
+    }
+}
+
+// Funkcja zwrotna (callback) dla zdarzeń scrolla myszy
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+	if (yoffset > 0) {
+		if (zoom<-3.0)zoom += 0.2;
+	}
+	else if (yoffset < 0) {
+		zoom += -0.2;
+	}
+}
+
+void windowResizeCallback(GLFWwindow* window,int width,int height) {
+    if (height==0) return;
+    aspectRatio=(float)width/(float)height;
+    glViewport(0,0,width,height);
+}
+
+//Procedura inicjująca
+void initOpenGLProgram(GLFWwindow* window) {
+	//************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
+	glClearColor(0,0,0,1);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//************Ładowanie tekstur do obiektów na scenie************
+	tex=readTexture("glass.png");
+	glfwSetWindowSizeCallback(window,windowResizeCallback);
+	glfwSetKeyCallback(window,keyCallback);
+	glfwSetScrollCallback(window, scrollCallback);
+	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
+}
+
+
+//Zwolnienie zasobów zajętych przez program
+void freeOpenGLProgram(GLFWwindow* window) {
+    //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
+	// 
+	//************Usuwanie tekstur obiektów ze sceny************
+	glDeleteTextures(1,&tex);
+    delete sp;
+}
+
+
+void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // 1. Oblicz macierz Widoku (V)
+    glm::mat4 V = glm::lookAt(
+        glm::vec3(0.0f, 0.0f, zoom),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f)
+    );
+
+    // 2. Oblicz macierz Rzutowania (P)
+    glm::mat4 P = glm::perspective(50.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
+
+    // 3. Aktywuj program cieniujący i prześlij macierze P i V
+    sp->use();
+    glUniformMatrix4fv(sp->u("P"), 1, false, glm::value_ptr(P));
+    glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));
+
+    // 4. Oblicz bazową macierz Modelu dla sceny (parentModelMatrix)
+    // Ta macierz będzie zawierać globalne transformacje, np. obrót całej sceny.
+    glm::mat4 M_sceneBase = glm::mat4(1.0f);
+    M_sceneBase = glm::rotate(M_sceneBase, angle_y, glm::vec3(1.0f, 0.0f, 0.0f)); // Globalny obrót góra/dół
+    M_sceneBase = glm::rotate(M_sceneBase, angle_x, glm::vec3(0.0f, 1.0f, 0.0f)); // Globalny obrót lewo/prawo
+
+	// 5. Rysowanie obiektów z teksturą:
+
+    // 6. Rysowanie obiektów z przezroczystością:
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	drawAquarium(sp, tex, M_sceneBase,glm::vec3(0.0f, 0.0f, 0.0f), 1.0f,1.0f);
+
+    // 7. Koniec rysowania obiektów z przezroczystością
+    glDisable(GL_BLEND);
+
+    glfwSwapBuffers(window); // Przerzuć tylny bufor na przedni
+}
+
+
+int main(void)
+{
+	GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
+
+	glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
+
+	if (!glfwInit()) { //Zainicjuj bibliotekę GLFW
+		fprintf(stderr, "Nie można zainicjować GLFW.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	window = glfwCreateWindow(1000, 1000, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+
+	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
+	{
+		fprintf(stderr, "Nie można utworzyć okna.\n");
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	glfwMakeContextCurrent(window); //Od tego momentu kontekst okna staje się aktywny i polecenia OpenGL będą dotyczyć właśnie jego.
+	glfwSwapInterval(1); //Czekaj na 1 powrót plamki przed pokazaniem ukrytego bufora
+
+	if (glewInit() != GLEW_OK) { //Zainicjuj bibliotekę GLEW
+		fprintf(stderr, "Nie można zainicjować GLEW.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	initOpenGLProgram(window); //Operacje inicjujące
+
+	//Główna pętla
+	float angle_x=0; //Aktualny kąt obrotu obiektu
+	float angle_y=0; //Aktualny kąt obrotu obiektu
+	glfwSetTime(0); //Zeruj timer
+	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
+	{
+        angle_x+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
+        angle_y+=speed_y*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
+        glfwSetTime(0); //Zeruj timer
+		drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
+		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
+	}
+
+	freeOpenGLProgram(window);
+
+	glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
+	glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
+	exit(EXIT_SUCCESS);
+}
