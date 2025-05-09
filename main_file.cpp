@@ -33,14 +33,18 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "myCube.h"
 #include "myAquarium.h"
 #include "myTeapot.h"
+#include "rockAlone.h"
 
 float speed_x=0;
 float speed_y=0;
 float aspectRatio=1;
 float zoom = -8.0;
 
-ShaderProgram *sp;
-GLuint tex; //Uchwyt – deklaracja globalna
+ShaderProgram *spTextured;
+GLuint Glasstex; //Uchwyt – deklaracja globalna
+GLuint Watertex; //Uchwyt – deklaracja globalna
+GLuint Rocktex; //Uchwyt – deklaracja globalna
+
 
 
 GLuint readTexture(const char* filename) {
@@ -110,11 +114,13 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//************Ładowanie tekstur do obiektów na scenie************
-	tex=readTexture("glass.png");
+	Glasstex=readTexture("glass.png");
+	Watertex = readTexture("water.png");
+	Rocktex = readTexture("rock.png");
 	glfwSetWindowSizeCallback(window,windowResizeCallback);
 	glfwSetKeyCallback(window,keyCallback);
 	glfwSetScrollCallback(window, scrollCallback);
-	sp=new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
+	spTextured =new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
 }
 
 
@@ -123,8 +129,10 @@ void freeOpenGLProgram(GLFWwindow* window) {
     //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
 	// 
 	//************Usuwanie tekstur obiektów ze sceny************
-	glDeleteTextures(1,&tex);
-    delete sp;
+	glDeleteTextures(1,&Glasstex);
+	glDeleteTextures(1, &Watertex);
+	glDeleteTextures(1, &Rocktex);
+    delete spTextured;
 }
 
 
@@ -142,9 +150,9 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
     glm::mat4 P = glm::perspective(50.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
 
     // 3. Aktywuj program cieniujący i prześlij macierze P i V
-    sp->use();
-    glUniformMatrix4fv(sp->u("P"), 1, false, glm::value_ptr(P));
-    glUniformMatrix4fv(sp->u("V"), 1, false, glm::value_ptr(V));
+	spTextured->use();
+    glUniformMatrix4fv(spTextured->u("P"), 1, false, glm::value_ptr(P));
+    glUniformMatrix4fv(spTextured->u("V"), 1, false, glm::value_ptr(V));
 
     // 4. Oblicz bazową macierz Modelu dla sceny (parentModelMatrix)
     // Ta macierz będzie zawierać globalne transformacje, np. obrót całej sceny.
@@ -153,12 +161,14 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
     M_sceneBase = glm::rotate(M_sceneBase, angle_x, glm::vec3(0.0f, 1.0f, 0.0f)); // Globalny obrót lewo/prawo
 
 	// 5. Rysowanie obiektów z teksturą:
+	drawStone(spTextured, Rocktex, M_sceneBase, glm::vec3(0.0f, -0.75f, 1.0f), 2.0f, 1.0f, 0.5f, 0.3f, 0.15f);
 
     // 6. Rysowanie obiektów z przezroczystością:
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	drawAquarium(sp, tex, M_sceneBase,glm::vec3(0.0f, 0.0f, 0.0f), 1.0f,1.0f);
+	drawAquarium(spTextured, Glasstex, M_sceneBase,glm::vec3(0.0f, 0.0f, 0.0f), 1.0f,1.0f);
+	drawWater(spTextured, Watertex, M_sceneBase, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 1.0f);
 
     // 7. Koniec rysowania obiektów z przezroczystością
     glDisable(GL_BLEND);

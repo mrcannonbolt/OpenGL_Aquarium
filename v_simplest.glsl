@@ -1,18 +1,15 @@
-#version 330
+#version 330 core
 
-//Zmienne jednorodne
 uniform mat4 P;
 uniform mat4 V;
 uniform mat4 M;
 
-//Atrybuty
-in vec4 vertex; //wspolrzedne wierzcholka w przestrzeni modelu
-in vec4 color;
+in vec4 vertex;
+in vec2 texCoord;
 
-out vec4 icolor;
-
+out vec2 TexCoord_FS; // Przekazanie do fragment shadera
 
 void main(void) {
-    icolor=color;
-    gl_Position=P*V*M*vertex;
+    gl_Position = P * V * M * vertex;
+    TexCoord_FS = texCoord;
 }
