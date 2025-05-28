@@ -20,7 +20,7 @@ extern const int myAquariumVertexCount; // Liczba wierzcho³ków mo¿e byæ const
 extern float myAquariumVertices[];      // Tablica wierzcho³ków (bez rozmiaru tutaj)
 extern float myAquariumTexCoords[];   // Tablica wspó³rzêdnych tekstur
 extern float myAquariumColors[];      // Tablica kolorów (jeœli u¿ywasz)
-
+extern float myAquariumNormals[];
 
 // --- DEKLARACJE funkcji ---
 // Funkcja inicjalizuj¹ca dane (np. texCoords, colors), jeœli potrzeba

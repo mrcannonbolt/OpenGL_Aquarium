@@ -34,6 +34,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "myAquarium.h"
 #include "myTeapot.h"
 #include "rockAlone.h"
+#include "myAlgae.h"
+#include "myFish.h"
 
 float speed_x=0;
 float speed_y=0;
@@ -44,7 +46,10 @@ ShaderProgram *spTextured;
 GLuint Glasstex; //Uchwyt – deklaracja globalna
 GLuint Watertex; //Uchwyt – deklaracja globalna
 GLuint Rocktex; //Uchwyt – deklaracja globalna
+GLuint Algaetex; //Uchwyt – deklaracja globalna
+GLuint Fishtex; // Uchwyt dla tekstury ryby
 
+std::vector<AlgaeGroupData> allMyAlgaeGroups; // Kontener na wszystkie kępy glonów
 
 
 GLuint readTexture(const char* filename) {
@@ -117,10 +122,49 @@ void initOpenGLProgram(GLFWwindow* window) {
 	Glasstex=readTexture("glass.png");
 	Watertex = readTexture("water.png");
 	Rocktex = readTexture("rock.png");
+	Algaetex = readTexture("alga.png");
+	Fishtex = readTexture("fish.png"); 
 	glfwSetWindowSizeCallback(window,windowResizeCallback);
 	glfwSetKeyCallback(window,keyCallback);
 	glfwSetScrollCallback(window, scrollCallback);
 	spTextured =new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
+
+	// Przykładowe tworzenie kęp glonów:
+	AlgaeGroupData group1 = initializeAlgaeGroup(
+		glm::vec3(0.0f, 0.0f, -1.8f), // Środek kępy na dnie (XZ)
+		-0.9,          // Poziom Y dna
+		80,                          // Liczba ostrzy w kępie
+		0.25f,                       // Promień rozrzucenia
+		0.8f, 1.3f                   // Min/max mnożnik wysokości
+	);
+	allMyAlgaeGroups.push_back(group1);
+
+	AlgaeGroupData group2 = initializeAlgaeGroup(
+		glm::vec3(-0.8f, -1.0f, 0.3f), // Środek kępy na dnie (XZ)
+		-0.9,          // Poziom Y dna
+		40,                          // Liczba ostrzy w kępie
+		0.25f,                       // Promień rozrzucenia
+		0.8f, 1.3f                   // Min/max mnożnik wysokości
+	);
+	allMyAlgaeGroups.push_back(group2);
+
+	AlgaeGroupData group3 = initializeAlgaeGroup(
+		glm::vec3(-0.3f, 1.3f, 1.0f), // Środek kępy na dnie (XZ)
+		-0.9,          // Poziom Y dna
+		20,                          // Liczba ostrzy w kępie
+		0.25f,                       // Promień rozrzucenia
+		0.8f, 1.3f                   // Min/max mnożnik wysokości
+	);
+	allMyAlgaeGroups.push_back(group3);
+
+	AlgaeGroupData group4 = initializeAlgaeGroup(
+		glm::vec3(1.4f, 1.2f, -0.6f), // Środek kępy na dnie (XZ)
+		-0.9,          // Poziom Y dna
+		100,                          // Liczba ostrzy w kępie
+		0.25f,                       // Promień rozrzucenia
+		0.8f, 1.3f                   // Min/max mnożnik wysokości
+	);
+	allMyAlgaeGroups.push_back(group4);
 }
 
 
@@ -132,6 +176,8 @@ void freeOpenGLProgram(GLFWwindow* window) {
 	glDeleteTextures(1,&Glasstex);
 	glDeleteTextures(1, &Watertex);
 	glDeleteTextures(1, &Rocktex);
+	glDeleteTextures(1, &Algaetex);
+	glDeleteTextures(1, &Fishtex);
     delete spTextured;
 }
 
@@ -153,6 +199,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
 	spTextured->use();
     glUniformMatrix4fv(spTextured->u("P"), 1, false, glm::value_ptr(P));
     glUniformMatrix4fv(spTextured->u("V"), 1, false, glm::value_ptr(V));
+	glUniform4f(spTextured->u("lp"), 0, 0, -4, 1.8);
 
     // 4. Oblicz bazową macierz Modelu dla sceny (parentModelMatrix)
     // Ta macierz będzie zawierać globalne transformacje, np. obrót całej sceny.
@@ -160,14 +207,68 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
     M_sceneBase = glm::rotate(M_sceneBase, angle_y, glm::vec3(1.0f, 0.0f, 0.0f)); // Globalny obrót góra/dół
     M_sceneBase = glm::rotate(M_sceneBase, angle_x, glm::vec3(0.0f, 1.0f, 0.0f)); // Globalny obrót lewo/prawo
 
-	// 5. Rysowanie obiektów z teksturą:
-	drawStone(spTextured, Rocktex, M_sceneBase, glm::vec3(0.0f, -0.75f, 1.0f), 2.0f, 1.0f, 0.5f, 0.3f, 0.15f);
+	// --- Rysowanie obiektów NIEPRZEZROCZYSTYCH ---
+	drawStone(spTextured, Rocktex, M_sceneBase, glm::vec3(0.0f, -0.74f, 1.0f), 2.0f, 1.0f, 0.5f, 0.3f, 0.15f);
+
+	// --- RYBKA 1 (Oryginalna) ---
+	float time1 = glfwGetTime() * 0.4f; // Czas dla pierwszej rybki
+	float radiusX1 = 0.9f;
+	float radiusZ1 = 1.1f;
+	// Pozycja rybki 1
+	float fishX1 = radiusX1 * cos(time1);
+	float fishZ1 = radiusZ1 * sin(2 * time1) / 2.0f;
+	float fishY1 = 0.4f * sin(time1 * 0.7f); // Delikatne unoszenie góra-dół
+	// Obrót rybki 1
+	float dx1 = -radiusX1 * sin(time1);
+	float dz1 = radiusZ1 * cos(2 * time1);
+	float fishRotation1 = atan2(dz1, dx1);
+	// Rysowanie pierwszej rybki
+	drawMyFish(spTextured, Fishtex, M_sceneBase, glm::vec3(fishX1, fishY1, fishZ1), 0.5f, fishRotation1);
+
+
+	// --- RYBKA 2 (Nowa) ---
+	// Modyfikujemy czas, aby druga rybka poruszała się inaczej
+	// Mniejszy mnożnik = wolniejsza rybka. Dodanie stałej wartości = przesunięcie w fazie.
+	float time2 = glfwGetTime() * 0.3f + 1.5f;
+	// Zmieniamy promienie, aby miała nieco inną ścieżkę
+	float radiusX2 = 1.1f;
+	float radiusZ2 = 0.9f;
+	// Pozycja rybki 2
+	float fishX2 = radiusX2 * cos(time2);
+	float fishZ2 = radiusZ2 * sin(2 * time2) / 2.0f;
+	float fishY2 = -0.1f + 0.3f * cos(time2 * 0.8f); // Inny wzór na ruch góra-dół i na innej wysokości
+	// Obrót rybki 2
+	float dx2 = -radiusX2 * sin(time2);
+	float dz2 = radiusZ2 * cos(2 * time2);
+	float fishRotation2 = atan2(dz2, dx2);
+	// Rysowanie drugiej rybki (np. nieco mniejszej)
+	drawMyFish(spTextured, Fishtex, M_sceneBase, glm::vec3(fishX2, fishY2, fishZ2), 0.4f, fishRotation2);
+
+	// --- RYBKA 3 (Nowa, dodana w tym samym stylu) ---
+	float time3 = glfwGetTime() * 0.5f + 3.0f; // Inne parametry czasu dla zróżnicowania
+	float radiusX3 = 0.8f;
+	float radiusZ3 = 0.8f;
+	// Pozycja rybki 3
+	float fishX3 = radiusX3 * sin(time3); // Użycie sin dla odmiany w osi X
+	float fishZ3 = radiusZ3 * cos(time3); // Użycie cos dla odmiany w osi Z
+	float fishY3 = 0.1f + 0.4f * sin(time3 * 1.1f); // Inny wzór na ruch góra-dół
+	// Obrót rybki 3
+	float dx3 = radiusX3 * cos(time3);
+	float dz3 = -radiusZ3 * sin(time3);
+	float fishRotation3 = atan2(dz3, dx3);
+	// Rysowanie trzeciej rybki
+	drawMyFish(spTextured, Fishtex, M_sceneBase, glm::vec3(fishX3, fishY3, fishZ3), 0.45f, fishRotation3);
 
     // 6. Rysowanie obiektów z przezroczystością:
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	drawAquarium(spTextured, Glasstex, M_sceneBase,glm::vec3(0.0f, 0.0f, 0.0f), 1.0f,1.0f);
+
+	for (const AlgaeGroupData& singleGroupData : allMyAlgaeGroups) {
+		renderAlgaeGroup(spTextured, Algaetex, M_sceneBase, singleGroupData);
+	}
+
 	drawWater(spTextured, Watertex, M_sceneBase, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 1.0f);
 
     // 7. Koniec rysowania obiektów z przezroczystością
@@ -177,52 +278,48 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
 }
 
 
-int main(void)
-{
-	GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
-
-	glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
-
-	if (!glfwInit()) { //Zainicjuj bibliotekę GLFW
+int main(void) {
+	GLFWwindow* window;
+	glfwSetErrorCallback(error_callback);
+	if (!glfwInit()) {
 		fprintf(stderr, "Nie można zainicjować GLFW.\n");
 		exit(EXIT_FAILURE);
 	}
+	window = glfwCreateWindow(1000, 1000, "Akwarium", NULL, NULL);
+	if (!window) {
 
-	window = glfwCreateWindow(1000, 1000, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
-
-	if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
-	{
 		fprintf(stderr, "Nie można utworzyć okna.\n");
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-
-	glfwMakeContextCurrent(window); //Od tego momentu kontekst okna staje się aktywny i polecenia OpenGL będą dotyczyć właśnie jego.
-	glfwSwapInterval(1); //Czekaj na 1 powrót plamki przed pokazaniem ukrytego bufora
-
-	if (glewInit() != GLEW_OK) { //Zainicjuj bibliotekę GLEW
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
+	if (glewInit() != GLEW_OK) {
 		fprintf(stderr, "Nie można zainicjować GLEW.\n");
 		exit(EXIT_FAILURE);
 	}
-
-	initOpenGLProgram(window); //Operacje inicjujące
-
-	//Główna pętla
-	float angle_x=0; //Aktualny kąt obrotu obiektu
-	float angle_y=0; //Aktualny kąt obrotu obiektu
-	glfwSetTime(0); //Zeruj timer
-	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
+	initOpenGLProgram(window);
+	float angle_x = 0;
+	float angle_y = 0;
+	// Zapamiętujemy czas ostatniej klatki, aby obliczyć "delta time"
+	double lastTime = glfwGetTime();
+	while (!glfwWindowShouldClose(window))
 	{
-        angle_x+=speed_x*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
-        angle_y+=speed_y*glfwGetTime(); //Zwiększ/zmniejsz kąt obrotu na podstawie prędkości i czasu jaki upłynał od poprzedniej klatki
-        glfwSetTime(0); //Zeruj timer
-		drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
-		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
+		// Obliczanie "delta time" - czasu, jaki upłynął od ostatniej klatki
+		double currentTime = glfwGetTime();
+		float deltaTime = float(currentTime - lastTime);
+		lastTime = currentTime;
+		// Aktualizuj kąty kamery używając deltaTime dla płynnego ruchu
+		angle_x += speed_x * deltaTime;
+		angle_y += speed_y * deltaTime;
+		// Wywołaj procedurę rysującą (nic się tu nie zmienia)
+		// Funkcja drawScene sama pobierze aktualny, globalny czas za pomocą glfwGetTime()
+		drawScene(window, angle_x, angle_y);
+		glfwPollEvents();
+
 	}
-
 	freeOpenGLProgram(window);
-
-	glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
-	glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
+	glfwDestroyWindow(window);
+	glfwTerminate();
 	exit(EXIT_SUCCESS);
 }

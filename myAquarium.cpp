@@ -303,6 +303,97 @@ float myWaterTexCoords[myWaterVertexCount * 2] = {
     0.0f, 0.0f,   1.0f, 1.0f,   0.0f, 1.0f,
 };
 
+float myAquariumNormals[myAquariumVertexCount * 3] = {
+    // Œcianka 1: Przód (36 wierzcho³ków)
+    // Zewnêtrzny prostok¹t (normalna (0,0,-1)) - 6 wierzcho³ków
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+    // Wewnêtrzny prostok¹t (normalna (0,0,1)) - 6 wierzcho³ków
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+    // Paski ³¹cz¹ce:
+    // Górny pasek (normalna (0,1,0)) - 6 wierzcho³ków
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+    // Dolny pasek (normalna (0,-1,0)) - 6 wierzcho³ków
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    // Lewy pasek (normalna (-1,0,0)) - 6 wierzcho³ków
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    // Prawy pasek (normalna (1,0,0)) - 6 wierzcho³ków
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+
+    // Œcianka 2: Ty³ (Z = +oD / +iD) - kolejne 36 wierzcho³ków
+    // Zewnêtrzny (0,0,1)
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+    // Wewnêtrzny (0,0,-1)
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+    // Paski: Górny (0,1,0), Dolny (0,-1,0), Lewy (-1,0,0), Prawy (1,0,0) (uwaga: 'lewy' i 'prawy' s¹ wzglêdem patrzenia na p³aszczyznê XY)
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f, // Górny
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, // Dolny
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f, // Lewy
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f, // Prawy
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+
+    // Œcianka 3: Dó³ (Y = -oH / -iH) - kolejne 36 wierzcho³ków
+    // Zewnêtrzny (0,-1,0)
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    // Wewnêtrzny (0,1,0) - dno akwarium
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+    // Paski: Przedni (0,0,-1), Tylny (0,0,1), Lewy (-1,0,0), Prawy (1,0,0)
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f, // Przedni
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,  // Tylny
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f, // Lewy
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,  // Prawy
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+
+    // Œcianka 4: Lewo (X = -oW / -iW) - kolejne 36 wierzcho³ków
+    // Zewnêtrzny (-1,0,0)
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    // Wewnêtrzny (1,0,0)
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+    // Paski: Górny (0,1,0), Dolny (0,-1,0), Przedni (0,0,-1), Tylny (0,0,1)
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   // Górny
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, // Dolny
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f, // Przedni
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   // Tylny
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+
+    // Œcianka 5: Prawo (X = +oW / +iW) - kolejne 36 wierzcho³ków
+    // Zewnêtrzny (1,0,0)
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+    // Wewnêtrzny (-1,0,0)
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+    // Paski: Górny (0,1,0), Dolny (0,-1,0), Przedni (0,0,-1), Tylny (0,0,1)
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   // Górny
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, // Dolny
+    0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f, // Przedni
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   // Tylny
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+};
+
 
 // Definicja tablic (pamiêtaj o ich wype³nieniu!)
 float myAquariumColors[myAquariumVertexCount * 4];
@@ -352,7 +443,6 @@ void drawAquarium(ShaderProgram* spTextured, GLuint tex, const glm::mat4& parent
 
     glDisableVertexAttribArray(spTextured->a("vertex"));
     glDisableVertexAttribArray(spTextured->a("texCoord"));
-    //glDisableVertexAttribArray(sp->a("color"));
 }
 
 void drawWater(ShaderProgram* spWater, GLuint texWater, const glm::mat4& parentModelMatrix, const glm::vec3& position, float scale, float localRotationAngleY) {
@@ -396,8 +486,8 @@ void drawWater(ShaderProgram* spWater, GLuint texWater, const glm::mat4& parentM
     // Woda jest zazwyczaj pó³przezroczysta.
     // Upewnij siê, ¿e blendowanie jest w³¹czone przed rysowaniem wody
     // i potencjalnie wy³¹czone po, jeœli inne obiekty nie s¹ przezroczyste.
-    // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Typowe ustawienie dla przezroczystoœci
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Typowe ustawienie dla przezroczystoœci
 
     // Dla wody, glDepthMask(GL_FALSE) jest czêsto u¿ywane, aby inne przezroczyste
     // obiekty za wod¹ by³y poprawnie renderowane, ale powierzchnia wody
@@ -411,7 +501,7 @@ void drawWater(ShaderProgram* spWater, GLuint texWater, const glm::mat4& parentM
 
     glDrawArrays(GL_TRIANGLES, 0, myWaterVertexCount);
 
-    // glDisable(GL_BLEND); // Jeœli by³o w³¹czone tylko dla wody
+    glDisable(GL_BLEND); // Jeœli by³o w³¹czone tylko dla wody
 
     glDisableVertexAttribArray(spWater->a("vertex"));
     glDisableVertexAttribArray(spWater->a("texCoord"));

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="myAlgae.h" />
     <ClInclude Include="myAquarium.h">
       <Filter>Nagłówki</Filter>
     </ClInclude>
@@ -28,6 +29,7 @@
     <ClInclude Include="lodepng.h">
       <Filter>Nagłówki</Filter>
     </ClInclude>
+    <ClInclude Include="myFish.h" />
     <ClInclude Include="rockAlone.h" />
     <ClInclude Include="shaderprogram.h">
       <Filter>Nagłówki</Filter>
@@ -46,9 +48,11 @@
     <ClCompile Include="main_file.cpp">
       <Filter>Źródła</Filter>
     </ClCompile>
+    <ClCompile Include="myAlgae.cpp" />
     <ClCompile Include="myAquarium.cpp">
       <Filter>Źródła</Filter>
     </ClCompile>
+    <ClCompile Include="myFish.cpp" />
     <ClCompile Include="rockAlone.cpp" />
     <ClCompile Include="shaderprogram.cpp">
       <Filter>Źródła</Filter>
