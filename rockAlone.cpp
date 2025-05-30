@@ -2,10 +2,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// Nasz model kamienia bêdzie siê sk³ada³ z 20 trójk¹tów
 const int myStoneVertexCount = 60; // 20 trójk¹tów * 3 wierzcho³ki
 
-// Tablica wierzcho³ków - BEZ ZMIAN
+// Tablica wierzcho³ków
 const float myStoneVertices[myStoneVertexCount * 4] = {
     // --- SPÓD ---
     // trójk¹t (p0, p1, p2)
@@ -56,7 +55,7 @@ const float myStoneVertices[myStoneVertexCount * 4] = {
             -0.2f, 0.5f, -0.1f, 1.0f, 0.1f, 0.5f, 0.3f, 1.0f, 0.2f, 0.5f, 0.0f, 1.0f
 };
 
-// Wspó³rzêdne tekstury - BEZ ZMIAN
+// Wspó³rzêdne tekstury
 const float myStoneTexCoords[myStoneVertexCount * 2] = {
     // SPÓD
     0.30f, 0.20f,  0.80f, 0.30f,  0.70f, 0.80f,
@@ -84,7 +83,6 @@ const float myStoneTexCoords[myStoneVertexCount * 2] = {
     0.30f, 0.40f,  0.60f, 0.80f,  0.70f, 0.50f
 };
 
-// *** NOWA TABLICA ***
 // Wektory normalne dla ka¿dego wierzcho³ka (do cieniowania p³askiego)
 const float myStoneNormals[myStoneVertexCount * 3] = {
     // --- SPÓD --- (normalne skierowane w dó³)
@@ -136,8 +134,6 @@ const float myStoneNormals[myStoneVertexCount * 3] = {
                 0.000f,  1.000f,  0.000f,   0.000f,  1.000f,  0.000f,   0.000f,  1.000f,  0.000f
 };
 
-// *** ZAKTUALIZOWANA FUNKCJA ***
-// Funkcja rysuj¹ca z obs³ug¹ wektorów normalnych
 void drawStone(ShaderProgram* spStone, GLuint texStone,
     const glm::mat4& parentModelMatrix,
     const glm::vec3& position,
@@ -150,16 +146,11 @@ void drawStone(ShaderProgram* spStone, GLuint texStone,
     M_local = glm::rotate(M_local, localRotationAngleY, glm::vec3(0.0f, 1.0f, 0.0f));
 
     // Skalujemy bazowy model do docelowych wymiarów.
-    // Wa¿ne: skalowanie jest niejednorodne, dlatego macierz normalnych jest niezbêdna!
     M_local = glm::scale(M_local, glm::vec3(stoneLength * scale, stoneHeight * scale, stoneWidth * scale));
 
     glm::mat4 M_final = parentModelMatrix * M_local;
 
     glUniformMatrix4fv(spStone->u("M"), 1, false, glm::value_ptr(M_final));
-    // Obliczenie i przes³anie macierzy normalnych.
-    // Jest to kluczowe, aby wektory normalne obróci³y siê prawid³owo razem z modelem.
-    //glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(M_final)));
-    //glUniformMatrix3fv(spStone->u("normalMatrix"), 1, false, glm::value_ptr(normalMatrix));
 
     // Przes³anie atrybutów wierzcho³ków
     glEnableVertexAttribArray(spStone->a("vertex"));
@@ -173,7 +164,6 @@ void drawStone(ShaderProgram* spStone, GLuint texStone,
     glVertexAttribPointer(spStone->a("normal"), 3, GL_FLOAT, false, 0, myStoneNormals);
 
     // Teksturowanie
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texStone);
 
     // Rysowanie

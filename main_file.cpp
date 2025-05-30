@@ -166,33 +166,34 @@ void freeOpenGLProgram(GLFWwindow* window) {
 void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// 1. Oblicz macierz Widoku (V)
+	// Obliczenie macierz Widoku (V)
 	glm::mat4 V = glm::lookAt(
 		glm::vec3(0.0f, 0.0f, zoom),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f)
 	);
 
-	// 2. Oblicz macierz Rzutowania (P)
+	// Obliczenie macierz Rzutowania (P)
 	glm::mat4 P = glm::perspective(50.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
 
-	// 3. Aktywuj program cieniujący i prześlij macierze P i V
+	// Aktywowanie programu cieniującego i przesyłanie macierzy P i V
 	spTextured->use();
 	glUniformMatrix4fv(spTextured->u("P"), 1, false, glm::value_ptr(P));
 	glUniformMatrix4fv(spTextured->u("V"), 1, false, glm::value_ptr(V));
 	glUniform4f(spTextured->u("lp"), 0, 0, 0, 1.12137);
-	glUniform1i(spTextured->u("textureMap0"), 0); //drawScene
+	glUniform1i(spTextured->u("textureMap0"), 0);
 
-	// 4. Oblicz bazową macierz Modelu dla sceny (parentModelMatrix)
-	// Ta macierz będzie zawierać globalne transformacje, np. obrót całej sceny.
+	// Obliczanie bazowej maciery Modelu dla sceny (parentModelMatrix)
 	glm::mat4 M_sceneBase = glm::mat4(1.0f);
 	M_sceneBase = glm::rotate(M_sceneBase, angle_y, glm::vec3(1.0f, 0.0f, 0.0f)); // Globalny obrót góra/dół
 	M_sceneBase = glm::rotate(M_sceneBase, angle_x, glm::vec3(0.0f, 1.0f, 0.0f)); // Globalny obrót lewo/prawo
 
+	glActiveTexture(GL_TEXTURE0);
+
 	// --- Rysowanie obiektów NIEPRZEZROCZYSTYCH ---
 	drawStone(spTextured, Rocktex, M_sceneBase, glm::vec3(0.0f, -0.74f, 1.0f), 2.0f, 1.0f, 0.5f, 0.3f, 0.15f);
 
-	// --- RYBKA 1 (Oryginalna) ---
+	// --- RYBKA 1 ---
 	float time1 = glfwGetTime() * 0.4f; // Czas dla pierwszej rybki
 	float radiusX1 = 0.9f;
 	float radiusZ1 = 1.1f;
@@ -208,11 +209,8 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
 	drawMyFish(spTextured, Fishtex, M_sceneBase, glm::vec3(fishX1, fishY1, fishZ1), 0.5f, fishRotation1);
 
 
-	// --- RYBKA 2 (Nowa) ---
-	// Modyfikujemy czas, aby druga rybka poruszała się inaczej
-	// Mniejszy mnożnik = wolniejsza rybka. Dodanie stałej wartości = przesunięcie w fazie.
+	// --- RYBKA 2 ---
 	float time2 = glfwGetTime() * 0.3f + 1.5f;
-	// Zmieniamy promienie, aby miała nieco inną ścieżkę
 	float radiusX2 = 1.1f;
 	float radiusZ2 = 0.9f;
 	// Pozycja rybki 2
@@ -226,8 +224,8 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
 	// Rysowanie drugiej rybki (np. nieco mniejszej)
 	drawMyFish(spTextured, Fishtex, M_sceneBase, glm::vec3(fishX2, fishY2, fishZ2), 0.4f, fishRotation2);
 
-	// --- RYBKA 3 (Nowa, dodana w tym samym stylu) ---
-	float time3 = glfwGetTime() * 0.5f + 3.0f; // Inne parametry czasu dla zróżnicowania
+	// --- RYBKA 3 ---
+	float time3 = glfwGetTime() * 0.5f + 3.0f;
 	float radiusX3 = 0.8f;
 	float radiusZ3 = 0.8f;
 	// Pozycja rybki 3
@@ -241,7 +239,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
 	// Rysowanie trzeciej rybki
 	drawMyFish(spTextured, Fishtex, M_sceneBase, glm::vec3(fishX3, fishY3, fishZ3), 0.45f, fishRotation3);
 
-	// 6. Rysowanie obiektów z przezroczystością:
+	// Rysowanie obiektów z przezroczystością:
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDepthMask(GL_FALSE);
@@ -255,7 +253,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
 	drawAquarium(spTextured, Glasstex, M_sceneBase, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 1.0f);
 
 
-	// 7. Koniec rysowania obiektów z przezroczystością
+	// Koniec rysowania obiektów z przezroczystością
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 
@@ -297,7 +295,6 @@ int main(void) {
 		// Aktualizuj kąty kamery używając deltaTime dla płynnego ruchu
 		angle_x += speed_x * deltaTime;
 		angle_y += speed_y * deltaTime;
-		// Wywołaj procedurę rysującą (nic się tu nie zmienia)
 		// Funkcja drawScene sama pobierze aktualny, globalny czas za pomocą glfwGetTime()
 		drawScene(window, angle_x, angle_y);
 		glfwPollEvents();

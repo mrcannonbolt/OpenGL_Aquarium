@@ -8,9 +8,9 @@
 // --- STA£E I DANE WIERZCHO£KÓW DLA GLONÓW ---
 
 extern const int ALGAE_BLADE_VERTEX_COUNT;
-extern const float algaeBladeVertices[];
-extern const float algaeBladeTexCoords[];
-extern const float algaeBladeNormals[];
+extern float algaeBladeVertices[];
+extern float algaeBladeTexCoords[];
+extern float algaeBladeNormals[];
 
 // --- STRUKTURY DANYCH DLA GLONÓW ---
 

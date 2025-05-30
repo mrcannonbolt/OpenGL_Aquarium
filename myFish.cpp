@@ -2,10 +2,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// Nasz model 3D bêdzie siê sk³ada³ z 9 trójk¹tów
 const int myFishVertexCount = 27;
 
-// Tablica wierzcho³ków dla kanciastej rybki 3D ("low-poly") - BEZ ZMIAN
+// Tablica wierzcho³ków dla kanciastej rybki 3D ("low-poly")
 const float myFishVertices[myFishVertexCount * 4] = {
     // --- PRZÓD KORPUSU (4 trójk¹ty tworz¹ce ostros³up) ---
     // Prawy-górny-przód
@@ -49,7 +48,7 @@ const float myFishVertices[myFishVertexCount * 4] = {
             -0.9f, -0.25f, 0.0f, 1.0f  // tip 2
 };
 
-// Wspó³rzêdne tekstury (proste mapowanie) - BEZ ZMIAN
+// Wspó³rzêdne tekstury (proste mapowanie)
 const float myFishTexCoords[myFishVertexCount * 2] = {
     // Przód
     1.0f, 0.5f,   0.5f, 1.0f,   0.5f, 0.5f,
@@ -65,7 +64,6 @@ const float myFishTexCoords[myFishVertexCount * 2] = {
     0.1f, 0.5f,   0.0f, 1.0f,   0.0f, 0.0f
 };
 
-// *** NOWA TABLICA ***
 // Wektory normalne dla ka¿dego wierzcho³ka (do cieniowania)
 // Dla cieniowania p³askiego, wszystkie 3 wierzcho³ki trójk¹ta maj¹ ten sam wektor normalny.
 const float myFishNormals[myFishVertexCount * 3] = {
@@ -111,9 +109,6 @@ const float myFishNormals[myFishVertexCount * 3] = {
 0.0f, 0.0f, 1.0f
 };
 
-
-// *** ZAKTUALIZOWANA FUNKCJA ***
-// Funkcja rysuj¹ca z obs³ug¹ wektorów normalnych
 void drawMyFish(ShaderProgram* sp, GLuint tex, const glm::mat4& parentModelMatrix, const glm::vec3& position, float scale, float rotationY) {
     // Obliczenie macierzy modelu i przes³anie jej do shadera
     glm::mat4 M_local = glm::mat4(1.0f);
@@ -122,10 +117,7 @@ void drawMyFish(ShaderProgram* sp, GLuint tex, const glm::mat4& parentModelMatri
     M_local = glm::scale(M_local, glm::vec3(scale, scale, scale));
     glm::mat4 M_final = parentModelMatrix * M_local;
     glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(M_final));
-    
-    // Obliczenie i przes³anie macierzy normalnych (kluczowe dla oœwietlenia przy skalowaniu!)
-    //glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(M_final)));
-    //glUniformMatrix3fv(sp->u("normalMatrix"), 1, false, glm::value_ptr(normalMatrix));
+
     // Przes³anie atrybutów wierzcho³ków
     glEnableVertexAttribArray(sp->a("vertex"));
     glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, myFishVertices);
@@ -138,7 +130,6 @@ void drawMyFish(ShaderProgram* sp, GLuint tex, const glm::mat4& parentModelMatri
     glVertexAttribPointer(sp->a("normal"), 3, GL_FLOAT, false, 0, myFishNormals);
 
     // Teksturowanie
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
 
     // Rysowanie

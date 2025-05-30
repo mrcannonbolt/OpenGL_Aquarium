@@ -8,7 +8,7 @@ const float ALGAE_BLADE_WIDTH = 0.08f;
 const float ALGAE_BLADE_BASE_HEIGHT = 0.7f;
 const int ALGAE_BLADE_VERTEX_COUNT = 6;
 
-const float algaeBladeVertices[ALGAE_BLADE_VERTEX_COUNT * 4] = {
+float algaeBladeVertices[ALGAE_BLADE_VERTEX_COUNT * 4] = {
     -ALGAE_BLADE_WIDTH / 2.0f, 0.0f,                    0.0f, 1.0f,
      ALGAE_BLADE_WIDTH / 2.0f, 0.0f,                    0.0f, 1.0f,
      ALGAE_BLADE_WIDTH / 2.0f, ALGAE_BLADE_BASE_HEIGHT, 0.0f, 1.0f,
@@ -17,12 +17,12 @@ const float algaeBladeVertices[ALGAE_BLADE_VERTEX_COUNT * 4] = {
     -ALGAE_BLADE_WIDTH / 2.0f, ALGAE_BLADE_BASE_HEIGHT, 0.0f, 1.0f
 };
 
-const float algaeBladeTexCoords[ALGAE_BLADE_VERTEX_COUNT * 2] = {
+float algaeBladeTexCoords[ALGAE_BLADE_VERTEX_COUNT * 2] = {
     0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
     0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f
 };
 
-const float algaeBladeNormals[ALGAE_BLADE_VERTEX_COUNT * 3] = {
+float algaeBladeNormals[ALGAE_BLADE_VERTEX_COUNT * 3] = {
     0.0f, 0.0f, 1.0f,   // Wierzcho³ek 1
     0.0f, 0.0f, 1.0f,   // Wierzcho³ek 2
     0.0f, 0.0f, 1.0f,   // Wierzcho³ek 3 (pierwszy trójk¹t)
@@ -93,7 +93,6 @@ void renderAlgaeGroup(
     glEnableVertexAttribArray(spAlgae->a("normal"));
     glVertexAttribPointer(spAlgae->a("normal"), 3, GL_FLOAT, false, 0, algaeBladeNormals);
 
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texAlgae);
 
 
