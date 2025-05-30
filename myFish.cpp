@@ -122,17 +122,18 @@ void drawMyFish(ShaderProgram* sp, GLuint tex, const glm::mat4& parentModelMatri
     M_local = glm::scale(M_local, glm::vec3(scale, scale, scale));
     glm::mat4 M_final = parentModelMatrix * M_local;
     glUniformMatrix4fv(sp->u("M"), 1, false, glm::value_ptr(M_final));
-
+    
     // Obliczenie i przes³anie macierzy normalnych (kluczowe dla oœwietlenia przy skalowaniu!)
-    glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(M_final)));
-    glUniformMatrix3fv(sp->u("normalMatrix"), 1, false, glm::value_ptr(normalMatrix));
-
+    //glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(M_final)));
+    //glUniformMatrix3fv(sp->u("normalMatrix"), 1, false, glm::value_ptr(normalMatrix));
+    glUniform4f(sp->u("lp"), 0, 0, 0, 1);
+    glUniform1i(sp->u("textureMap0"), 0); //drawScene
     // Przes³anie atrybutów wierzcho³ków
     glEnableVertexAttribArray(sp->a("vertex"));
     glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, myFishVertices);
 
-    glEnableVertexAttribArray(sp->a("texCoord"));
-    glVertexAttribPointer(sp->a("texCoord"), 2, GL_FLOAT, false, 0, myFishTexCoords);
+    glEnableVertexAttribArray(sp->a("texCoord0"));
+    glVertexAttribPointer(sp->a("texCoord0"), 2, GL_FLOAT, false, 0, myFishTexCoords);
 
     // Przes³anie wektorów normalnych
     glEnableVertexAttribArray(sp->a("normal"));
@@ -141,13 +142,12 @@ void drawMyFish(ShaderProgram* sp, GLuint tex, const glm::mat4& parentModelMatri
     // Teksturowanie
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glUniform1i(sp->u("tex"), 0);
 
     // Rysowanie
     glDrawArrays(GL_TRIANGLES, 0, myFishVertexCount);
 
     // Wy³¹czenie atrybutów
     glDisableVertexAttribArray(sp->a("vertex"));
-    glDisableVertexAttribArray(sp->a("texCoord"));
+    glDisableVertexAttribArray(sp->a("texCoord0"));
     glDisableVertexAttribArray(sp->a("normal"));
 }

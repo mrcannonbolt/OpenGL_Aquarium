@@ -30,9 +30,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "constants.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
-#include "myCube.h"
 #include "myAquarium.h"
-#include "myTeapot.h"
 #include "rockAlone.h"
 #include "myAlgae.h"
 #include "myFish.h"
@@ -199,7 +197,6 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
 	spTextured->use();
     glUniformMatrix4fv(spTextured->u("P"), 1, false, glm::value_ptr(P));
     glUniformMatrix4fv(spTextured->u("V"), 1, false, glm::value_ptr(V));
-	glUniform4f(spTextured->u("lp"), 0, 0, -4, 1.8);
 
     // 4. Oblicz bazową macierz Modelu dla sceny (parentModelMatrix)
     // Ta macierz będzie zawierać globalne transformacje, np. obrót całej sceny.

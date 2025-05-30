@@ -156,18 +156,19 @@ void drawStone(ShaderProgram* spStone, GLuint texStone,
     glm::mat4 M_final = parentModelMatrix * M_local;
 
     glUniformMatrix4fv(spStone->u("M"), 1, false, glm::value_ptr(M_final));
-
+    glUniform4f(spStone->u("lp"), 0, 0, 0, 1);
+    glUniform1i(spStone->u("textureMap0"), 0); //drawScene
     // Obliczenie i przes³anie macierzy normalnych.
     // Jest to kluczowe, aby wektory normalne obróci³y siê prawid³owo razem z modelem.
-    glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(M_final)));
-    glUniformMatrix3fv(spStone->u("normalMatrix"), 1, false, glm::value_ptr(normalMatrix));
+    //glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(M_final)));
+    //glUniformMatrix3fv(spStone->u("normalMatrix"), 1, false, glm::value_ptr(normalMatrix));
 
     // Przes³anie atrybutów wierzcho³ków
     glEnableVertexAttribArray(spStone->a("vertex"));
     glVertexAttribPointer(spStone->a("vertex"), 4, GL_FLOAT, false, 0, myStoneVertices);
 
-    glEnableVertexAttribArray(spStone->a("texCoord"));
-    glVertexAttribPointer(spStone->a("texCoord"), 2, GL_FLOAT, false, 0, myStoneTexCoords);
+    glEnableVertexAttribArray(spStone->a("texCoord0"));
+    glVertexAttribPointer(spStone->a("texCoord0"), 2, GL_FLOAT, false, 0, myStoneTexCoords);
 
     // Przes³anie wektorów normalnych
     glEnableVertexAttribArray(spStone->a("normal"));
@@ -176,13 +177,12 @@ void drawStone(ShaderProgram* spStone, GLuint texStone,
     // Teksturowanie
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texStone);
-    glUniform1i(spStone->u("tex"), 0);
 
     // Rysowanie
     glDrawArrays(GL_TRIANGLES, 0, myStoneVertexCount);
 
     // Wy³¹czenie atrybutów
     glDisableVertexAttribArray(spStone->a("vertex"));
-    glDisableVertexAttribArray(spStone->a("texCoord"));
+    glDisableVertexAttribArray(spStone->a("texCoord0"));
     glDisableVertexAttribArray(spStone->a("normal"));
 }

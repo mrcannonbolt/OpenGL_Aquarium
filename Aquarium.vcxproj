@@ -34,12 +34,6 @@
     <ClInclude Include="shaderprogram.h">
       <Filter>Nagłówki</Filter>
     </ClInclude>
-    <ClInclude Include="myCube.h">
-      <Filter>Nagłówki</Filter>
-    </ClInclude>
-    <ClInclude Include="myTeapot.h">
-      <Filter>Nagłówki</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lodepng.cpp">

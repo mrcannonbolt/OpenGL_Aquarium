@@ -4,16 +4,14 @@ uniform sampler2D textureMap0; //zmienna reprezentuj¹ca jednostkê teksturuj¹c¹
 
 out vec4 pixelColor; //Zmienna wyjsciowa fragment shadera. Zapisuje sie do niej ostateczny (prawie) kolor piksela
 
-in vec2 TexCoord_FS;
+in vec2 iTexCoord0;
 
 in vec4 l;
 in vec4 n;
 in vec4 v;
 
-uniform sampler2D tex;
-
 void main(void) {
-    vec4 textureColor = texture(tex, TexCoord_FS);
+    vec4 textureColor = texture(textureMap0, iTexCoord0);
 
 	vec4 ml = normalize(l);
 	vec4 mn = normalize(n);

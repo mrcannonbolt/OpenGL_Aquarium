@@ -303,14 +303,16 @@ float myWaterTexCoords[myWaterVertexCount * 2] = {
     0.0f, 0.0f,   1.0f, 1.0f,   0.0f, 1.0f,
 };
 
-float myAquariumNormals[myAquariumVertexCount * 3] = {
-    // Œcianka 1: Przód (36 wierzcho³ków)
-    // Zewnêtrzny prostok¹t (normalna (0,0,-1)) - 6 wierzcho³ków
-    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-    // Wewnêtrzny prostok¹t (normalna (0,0,1)) - 6 wierzcho³ków
+// myAquariumNormals - Poprawione wartoœci
+// Zak³adamy myAquariumVertexCount = 180 (dla 5 œcianek po 36 wierzcho³ków)
+float myAquariumNormals[180 * 3] = {
+    // Œcianka 1: Przód (Front Wall) Z = -oD / -iD (36 wierzcho³ków)
+    // Zewnêtrzny prostok¹t (normalna (0,0,1) - skierowana DO OBSERATORA) - 6 wierzcho³ków
     0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+    // Wewnêtrzny prostok¹t (normalna (0,0,-1) - skierowana DO WNÊTRZA AKWARIUM) - 6 wierzcho³ków
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
     // Paski ³¹cz¹ce:
     // Górny pasek (normalna (0,1,0)) - 6 wierzcho³ków
     0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
@@ -325,28 +327,28 @@ float myAquariumNormals[myAquariumVertexCount * 3] = {
     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
 
-    // Œcianka 2: Ty³ (Z = +oD / +iD) - kolejne 36 wierzcho³ków
-    // Zewnêtrzny (0,0,1)
-    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
-    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
-    // Wewnêtrzny (0,0,-1)
+    // Œcianka 2: Ty³ (Back Wall) Z = +oD / +iD (kolejne 36 wierzcho³ków)
+    // Zewnêtrzny prostok¹t (normalna (0,0,-1) - skierowana OD OBSERWATORA) - 6 wierzcho³ków
     0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
     0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-    // Paski: Górny (0,1,0), Dolny (0,-1,0), Lewy (-1,0,0), Prawy (1,0,0) (uwaga: 'lewy' i 'prawy' s¹ wzglêdem patrzenia na p³aszczyznê XY)
+    // Wewnêtrzny prostok¹t (normalna (0,0,1) - skierowana DO WNÊTRZA AKWARIUM) - 6 wierzcho³ków
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+    // Paski: Górny (0,1,0), Dolny (0,-1,0), Lewy (-1,0,0), Prawy (1,0,0)
     0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f, // Górny
     0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
     0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, // Dolny
     0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
     -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f, // Lewy
     -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
-    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f, // Prawy
+    1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,  // Prawy
     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
 
-    // Œcianka 3: Dó³ (Y = -oH / -iH) - kolejne 36 wierzcho³ków
-    // Zewnêtrzny (0,-1,0)
+    // Œcianka 3: Dó³ (Bottom Wall) Y = -oH / -iH (kolejne 36 wierzcho³ków)
+    // Zewnêtrzny prostok¹t (normalna (0,-1,0) - skierowana W DÓ£)
     0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
     0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
-    // Wewnêtrzny (0,1,0) - dno akwarium
+    // Wewnêtrzny prostok¹t (dno akwarium, normalna (0,1,0) - skierowana W GÓRÊ)
     0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
     0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
     // Paski: Przedni (0,0,-1), Tylny (0,0,1), Lewy (-1,0,0), Prawy (1,0,0)
@@ -359,41 +361,68 @@ float myAquariumNormals[myAquariumVertexCount * 3] = {
     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,  // Prawy
     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
 
-    // Œcianka 4: Lewo (X = -oW / -iW) - kolejne 36 wierzcho³ków
-    // Zewnêtrzny (-1,0,0)
+    // Œcianka 4: Lewo (Left Wall) X = -oW / -iW (kolejne 36 wierzcho³ków)
+    // Zewnêtrzny prostok¹t (normalna (-1,0,0) - skierowana W LEWO)
     -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
     -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
-    // Wewnêtrzny (1,0,0)
+    // Wewnêtrzny prostok¹t (normalna (1,0,0) - skierowana W PRAWO, DO WNÊTRZA)
     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
     // Paski: Górny (0,1,0), Dolny (0,-1,0), Przedni (0,0,-1), Tylny (0,0,1)
-    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   // Górny
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,  // Górny
     0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
     0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, // Dolny
     0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
     0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f, // Przedni
     0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   // Tylny
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,  // Tylny
     0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
 
-    // Œcianka 5: Prawo (X = +oW / +iW) - kolejne 36 wierzcho³ków
-    // Zewnêtrzny (1,0,0)
+    // Œcianka 5: Prawo (Right Wall) X = +oW / +iW (kolejne 36 wierzcho³ków)
+    // Zewnêtrzny prostok¹t (normalna (1,0,0) - skierowana W PRAWO)
     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
     1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
-    // Wewnêtrzny (-1,0,0)
+    // Wewnêtrzny prostok¹t (normalna (-1,0,0) - skierowana W LEWO, DO WNÊTRZA)
     -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
     -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
     // Paski: Górny (0,1,0), Dolny (0,-1,0), Przedni (0,0,-1), Tylny (0,0,1)
-    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   // Górny
+    0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,  // Górny
     0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f, 0.0f,
     0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, // Dolny
     0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f,
     0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f, // Przedni
     0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
-    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   // Tylny
+    0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,  // Tylny
     0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
 };
 
+// myWaterNormals - Zak³adaj¹c, ¿e woda to szeœcian.
+// myWaterVertexCount = 36
+float myWaterNormals[36 * 3] = {
+    // Œciana: Dó³ (Y = waterBottomY), normalna skierowana W DÓ£ (na zewn¹trz objêtoœci wody)
+    0.0f, -1.0f, 0.0f,   0.0f, -1.0f, 0.0f,   0.0f, -1.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,   0.0f, -1.0f, 0.0f,   0.0f, -1.0f, 0.0f,
+
+    // Œciana: Góra (Y = waterTopY, powierzchnia wody), normalna skierowana W GÓRÊ
+    0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 0.0f,
+
+    // Œciana: Przód (Z = iD, z perspektywy wody), normalna skierowana DO PRZODU (+Z)
+    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,
+
+    // Œciana: Ty³ (Z = -iD, z perspektywy wody), normalna skierowana DO TY£U (-Z)
+    0.0f, 0.0f, -1.0f,   0.0f, 0.0f, -1.0f,   0.0f, 0.0f, -1.0f,
+    0.0f, 0.0f, -1.0f,   0.0f, 0.0f, -1.0f,   0.0f, 0.0f, -1.0f,
+
+    // Œciana: Lewo (X = -iW, z perspektywy wody), normalna skierowana W LEWO (-X)
+    -1.0f, 0.0f, 0.0f,   -1.0f, 0.0f, 0.0f,   -1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f,   -1.0f, 0.0f, 0.0f,   -1.0f, 0.0f, 0.0f,
+
+    // Œciana: Prawo (X = iW, z perspektywy wody), normalna skierowana W PRAWO (+X)
+    1.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f,
+};
 
 // Definicja tablic (pamiêtaj o ich wype³nieniu!)
 float myAquariumColors[myAquariumVertexCount * 4];
@@ -416,7 +445,8 @@ void drawAquarium(ShaderProgram* spTextured, GLuint tex, const glm::mat4& parent
     M_local = glm::translate(M_local, position);
     M_local = glm::rotate(M_local, localRotationAngleY, glm::vec3(0.0f, 1.0f, 0.0f)); // Obróæ wokó³ osi Y
     M_local = glm::scale(M_local, glm::vec3(scale, scale, scale)); // Skaluj jednolicie
-
+    glUniform4f(spTextured->u("lp"), 0, 0, 0, 1);
+    glUniform1i(spTextured->u("textureMap0"), 0); //drawScene
     // 2. Po³¹cz lokaln¹ macierz z macierz¹ "rodzica"
     glm::mat4 M_final = parentModelMatrix * M_local;
 
@@ -427,14 +457,15 @@ void drawAquarium(ShaderProgram* spTextured, GLuint tex, const glm::mat4& parent
     glEnableVertexAttribArray(spTextured->a("vertex"));
     glVertexAttribPointer(spTextured->a("vertex"), 4, GL_FLOAT, false, 0, myAquariumVertices);
 
-    glEnableVertexAttribArray(spTextured->a("texCoord"));
-    glVertexAttribPointer(spTextured->a("texCoord"), 2, GL_FLOAT, false, 0, myAquariumTexCoords);
-
+    glEnableVertexAttribArray(spTextured->a("texCoord0"));
+    glVertexAttribPointer(spTextured->a("texCoord0"), 2, GL_FLOAT, false, 0, myAquariumTexCoords);
+    glEnableVertexAttribArray(spTextured->a("normal"));  //W³¹cz przesy³anie danych do atrybutu normal
+    glVertexAttribPointer(spTextured->a("normal"), 3, GL_FLOAT, false, 0, myAquariumNormals); //Wska¿ tablicê z danymi dla atrybutu normal
     //glEnableVertexAttribArray(sp->a("color"));
     //glVertexAttribPointer(sp->a("color"), 4, GL_FLOAT, false, 0, myAquariumColors);
 
-    glActiveTexture(GL_TEXTURE0); glBindTexture(GL_TEXTURE_2D, tex);
-    glUniform1i(spTextured->u("tex"), 0); // Ustawienie samplera tekstury
+    glActiveTexture(GL_TEXTURE0); 
+    glBindTexture(GL_TEXTURE_2D, tex);
 
     // glDepthMask jest specyficzne dla tego obiektu
     glDepthMask(GL_FALSE);
@@ -442,7 +473,9 @@ void drawAquarium(ShaderProgram* spTextured, GLuint tex, const glm::mat4& parent
     glDepthMask(GL_TRUE);
 
     glDisableVertexAttribArray(spTextured->a("vertex"));
-    glDisableVertexAttribArray(spTextured->a("texCoord"));
+    glDisableVertexAttribArray(spTextured->a("texCoord0"));
+    glDisableVertexAttribArray(spTextured->a("normal"));
+
 }
 
 void drawWater(ShaderProgram* spWater, GLuint texWater, const glm::mat4& parentModelMatrix, const glm::vec3& position, float scale, float localRotationAngleY) {
@@ -471,17 +504,18 @@ void drawWater(ShaderProgram* spWater, GLuint texWater, const glm::mat4& parentM
 
     // 2. Przeœlij wynikow¹ macierz Modelu (M_final) do shadera wody
     glUniformMatrix4fv(spWater->u("M"), 1, false, glm::value_ptr(M_final));
-
+    glUniform4f(spWater->u("lp"), 0, 0, 0, 1);
+    glUniform1i(spWater->u("textureMap0"), 0); //drawScene
     // 3. Logika rysowania wody
     glEnableVertexAttribArray(spWater->a("vertex")); // U¿yj nazw atrybutów ze swojego shadera wody
     glVertexAttribPointer(spWater->a("vertex"), 4, GL_FLOAT, false, 0, myWaterVertices);
 
-    glEnableVertexAttribArray(spWater->a("texCoord")); // U¿yj nazw atrybutów ze swojego shadera wody
-    glVertexAttribPointer(spWater->a("texCoord"), 2, GL_FLOAT, false, 0, myWaterTexCoords);
-
+    glEnableVertexAttribArray(spWater->a("texCoord0")); // U¿yj nazw atrybutów ze swojego shadera wody
+    glVertexAttribPointer(spWater->a("texCoord0"), 2, GL_FLOAT, false, 0, myWaterTexCoords);
+    glEnableVertexAttribArray(spWater->a("normal"));  //W³¹cz przesy³anie danych do atrybutu normal
+    glVertexAttribPointer(spWater->a("normal"), 3, GL_FLOAT, false, 0, myWaterNormals); //Wska¿ tablicê z danymi dla atrybutu normal
     glActiveTexture(GL_TEXTURE0); // Aktywuj jednostkê teksturuj¹c¹
     glBindTexture(GL_TEXTURE_2D, texWater); // Zbinduj teksturê wody
-    glUniform1i(spWater->u("tex"), 0); // Ustaw sampler tekstury dla shadera wody
 
     // Woda jest zazwyczaj pó³przezroczysta.
     // Upewnij siê, ¿e blendowanie jest w³¹czone przed rysowaniem wody
@@ -504,5 +538,6 @@ void drawWater(ShaderProgram* spWater, GLuint texWater, const glm::mat4& parentM
     glDisable(GL_BLEND); // Jeœli by³o w³¹czone tylko dla wody
 
     glDisableVertexAttribArray(spWater->a("vertex"));
-    glDisableVertexAttribArray(spWater->a("texCoord"));
+    glDisableVertexAttribArray(spWater->a("texCoord0"));
+    glDisableVertexAttribArray(spWater->a("normal"));
 }

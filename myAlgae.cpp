@@ -88,18 +88,19 @@ void renderAlgaeGroup(
     const glm::mat4& M_aquariumTransform,
     const AlgaeGroupData& groupData)
 {
+    glUniform4f(spAlgae->u("lp"), 0, 0, 0, 1);
+    glUniform1i(spAlgae->u("textureMap0"), 0); //drawScene
     glEnableVertexAttribArray(spAlgae->a("vertex"));
     glVertexAttribPointer(spAlgae->a("vertex"), 4, GL_FLOAT, false, 0, algaeBladeVertices);
 
-    glEnableVertexAttribArray(spAlgae->a("texCoord"));
-    glVertexAttribPointer(spAlgae->a("texCoord"), 2, GL_FLOAT, false, 0, algaeBladeTexCoords);
+    glEnableVertexAttribArray(spAlgae->a("texCoord0"));
+    glVertexAttribPointer(spAlgae->a("texCoord0"), 2, GL_FLOAT, false, 0, algaeBladeTexCoords);
 
     glEnableVertexAttribArray(spAlgae->a("normal")); // Za³ó¿my, ¿e atrybut w shaderze nazywa siê "normal"
     glVertexAttribPointer(spAlgae->a("normal"), 3, GL_FLOAT, false, 0, algaeBladeNormals);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texAlgae);
-    glUniform1i(spAlgae->u("tex"), 0);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -133,7 +134,7 @@ void renderAlgaeGroup(
     }
 
     glDisableVertexAttribArray(spAlgae->a("vertex"));
-    glDisableVertexAttribArray(spAlgae->a("texCoord"));
+    glDisableVertexAttribArray(spAlgae->a("texCoord0"));
     glDisableVertexAttribArray(spAlgae->a("normal"));
 
     glDisable(GL_BLEND);
