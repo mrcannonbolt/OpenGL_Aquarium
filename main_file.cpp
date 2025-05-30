@@ -41,11 +41,13 @@ float aspectRatio=1;
 float zoom = -8.0;
 
 ShaderProgram *spTextured;
-GLuint Glasstex; //Uchwyt – deklaracja globalna
-GLuint Watertex; //Uchwyt – deklaracja globalna
-GLuint Rocktex; //Uchwyt – deklaracja globalna
-GLuint Algaetex; //Uchwyt – deklaracja globalna
-GLuint Fishtex; // Uchwyt dla tekstury ryby
+
+//Uchwyty dla tekstur
+GLuint Glasstex;
+GLuint Watertex;
+GLuint Rocktex;
+GLuint Algaetex;
+GLuint Fishtex;
 
 std::vector<AlgaeGroupData> allMyAlgaeGroups; // Kontener na wszystkie kępy glonów
 
@@ -111,11 +113,8 @@ void windowResizeCallback(GLFWwindow* window,int width,int height) {
 
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
-	//************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
 	glClearColor(0,0,0,1);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//************Ładowanie tekstur do obiektów na scenie************
 	Glasstex=readTexture("glass.png");
 	Watertex = readTexture("water.png");
@@ -126,50 +125,35 @@ void initOpenGLProgram(GLFWwindow* window) {
 	glfwSetKeyCallback(window,keyCallback);
 	glfwSetScrollCallback(window, scrollCallback);
 	spTextured =new ShaderProgram("v_simplest.glsl",NULL,"f_simplest.glsl");
-
-	// Przykładowe tworzenie kęp glonów:
 	AlgaeGroupData group1 = initializeAlgaeGroup(
-		glm::vec3(0.0f, 0.0f, -1.8f), // Środek kępy na dnie (XZ)
+		glm::vec3(0.0f, 0.0f, -0.5f), // Środek kępy na dnie (XZ)
 		-0.9,          // Poziom Y dna
-		80,                          // Liczba ostrzy w kępie
-		0.25f,                       // Promień rozrzucenia
+		40,                          // Liczba liści w kępie
+		0.85f,                       // Promień rozrzucenia
 		0.8f, 1.3f                   // Min/max mnożnik wysokości
+	);
+	AlgaeGroupData group3 = initializeAlgaeGroup(
+		glm::vec3(-0.3f, 1.3f, 1.0f), 
+		-0.9,         
+		20,                     
+		0.25f,               
+		0.8f, 1.3f        
+	);
+	AlgaeGroupData group4 = initializeAlgaeGroup(
+		glm::vec3(1.4f, 1.2f, -0.6f),
+		-0.9,          
+		100,                 
+		0.25f,                      
+		0.8f, 1.3f               
 	);
 	allMyAlgaeGroups.push_back(group1);
-
-	AlgaeGroupData group2 = initializeAlgaeGroup(
-		glm::vec3(-0.8f, -1.0f, 0.3f), // Środek kępy na dnie (XZ)
-		-0.9,          // Poziom Y dna
-		40,                          // Liczba ostrzy w kępie
-		0.25f,                       // Promień rozrzucenia
-		0.8f, 1.3f                   // Min/max mnożnik wysokości
-	);
-	allMyAlgaeGroups.push_back(group2);
-
-	AlgaeGroupData group3 = initializeAlgaeGroup(
-		glm::vec3(-0.3f, 1.3f, 1.0f), // Środek kępy na dnie (XZ)
-		-0.9,          // Poziom Y dna
-		20,                          // Liczba ostrzy w kępie
-		0.25f,                       // Promień rozrzucenia
-		0.8f, 1.3f                   // Min/max mnożnik wysokości
-	);
 	allMyAlgaeGroups.push_back(group3);
-
-	AlgaeGroupData group4 = initializeAlgaeGroup(
-		glm::vec3(1.4f, 1.2f, -0.6f), // Środek kępy na dnie (XZ)
-		-0.9,          // Poziom Y dna
-		100,                          // Liczba ostrzy w kępie
-		0.25f,                       // Promień rozrzucenia
-		0.8f, 1.3f                   // Min/max mnożnik wysokości
-	);
 	allMyAlgaeGroups.push_back(group4);
 }
 
 
 //Zwolnienie zasobów zajętych przez program
 void freeOpenGLProgram(GLFWwindow* window) {
-    //************Tutaj umieszczaj kod, który należy wykonać po zakończeniu pętli głównej************
-	// 
 	//************Usuwanie tekstur obiektów ze sceny************
 	glDeleteTextures(1,&Glasstex);
 	glDeleteTextures(1, &Watertex);
@@ -179,30 +163,31 @@ void freeOpenGLProgram(GLFWwindow* window) {
     delete spTextured;
 }
 
-
 void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // 1. Oblicz macierz Widoku (V)
-    glm::mat4 V = glm::lookAt(
-        glm::vec3(0.0f, 0.0f, zoom),
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 1.0f, 0.0f)
-    );
+	// 1. Oblicz macierz Widoku (V)
+	glm::mat4 V = glm::lookAt(
+		glm::vec3(0.0f, 0.0f, zoom),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
 
-    // 2. Oblicz macierz Rzutowania (P)
-    glm::mat4 P = glm::perspective(50.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
+	// 2. Oblicz macierz Rzutowania (P)
+	glm::mat4 P = glm::perspective(50.0f * PI / 180.0f, aspectRatio, 0.01f, 50.0f);
 
-    // 3. Aktywuj program cieniujący i prześlij macierze P i V
+	// 3. Aktywuj program cieniujący i prześlij macierze P i V
 	spTextured->use();
-    glUniformMatrix4fv(spTextured->u("P"), 1, false, glm::value_ptr(P));
-    glUniformMatrix4fv(spTextured->u("V"), 1, false, glm::value_ptr(V));
+	glUniformMatrix4fv(spTextured->u("P"), 1, false, glm::value_ptr(P));
+	glUniformMatrix4fv(spTextured->u("V"), 1, false, glm::value_ptr(V));
+	glUniform4f(spTextured->u("lp"), 0, 0, 0, 1.12137);
+	glUniform1i(spTextured->u("textureMap0"), 0); //drawScene
 
-    // 4. Oblicz bazową macierz Modelu dla sceny (parentModelMatrix)
-    // Ta macierz będzie zawierać globalne transformacje, np. obrót całej sceny.
-    glm::mat4 M_sceneBase = glm::mat4(1.0f);
-    M_sceneBase = glm::rotate(M_sceneBase, angle_y, glm::vec3(1.0f, 0.0f, 0.0f)); // Globalny obrót góra/dół
-    M_sceneBase = glm::rotate(M_sceneBase, angle_x, glm::vec3(0.0f, 1.0f, 0.0f)); // Globalny obrót lewo/prawo
+	// 4. Oblicz bazową macierz Modelu dla sceny (parentModelMatrix)
+	// Ta macierz będzie zawierać globalne transformacje, np. obrót całej sceny.
+	glm::mat4 M_sceneBase = glm::mat4(1.0f);
+	M_sceneBase = glm::rotate(M_sceneBase, angle_y, glm::vec3(1.0f, 0.0f, 0.0f)); // Globalny obrót góra/dół
+	M_sceneBase = glm::rotate(M_sceneBase, angle_x, glm::vec3(0.0f, 1.0f, 0.0f)); // Globalny obrót lewo/prawo
 
 	// --- Rysowanie obiektów NIEPRZEZROCZYSTYCH ---
 	drawStone(spTextured, Rocktex, M_sceneBase, glm::vec3(0.0f, -0.74f, 1.0f), 2.0f, 1.0f, 0.5f, 0.3f, 0.15f);
@@ -256,22 +241,25 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y) {
 	// Rysowanie trzeciej rybki
 	drawMyFish(spTextured, Fishtex, M_sceneBase, glm::vec3(fishX3, fishY3, fishZ3), 0.45f, fishRotation3);
 
-    // 6. Rysowanie obiektów z przezroczystością:
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// 6. Rysowanie obiektów z przezroczystością:
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_FALSE);
 
-	drawAquarium(spTextured, Glasstex, M_sceneBase,glm::vec3(0.0f, 0.0f, 0.0f), 1.0f,1.0f);
+	drawWater(spTextured, Watertex, M_sceneBase, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 1.0f);
 
 	for (const AlgaeGroupData& singleGroupData : allMyAlgaeGroups) {
 		renderAlgaeGroup(spTextured, Algaetex, M_sceneBase, singleGroupData);
 	}
 
-	drawWater(spTextured, Watertex, M_sceneBase, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 1.0f);
+	drawAquarium(spTextured, Glasstex, M_sceneBase, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 1.0f);
 
-    // 7. Koniec rysowania obiektów z przezroczystością
-    glDisable(GL_BLEND);
 
-    glfwSwapBuffers(window); // Przerzuć tylny bufor na przedni
+	// 7. Koniec rysowania obiektów z przezroczystością
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+
+	glfwSwapBuffers(window); // Przerzuć tylny bufor na przedni
 }
 
 

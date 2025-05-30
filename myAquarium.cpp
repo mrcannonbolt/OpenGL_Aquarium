@@ -433,7 +433,7 @@ void initMyAquariumData() {
         myAquariumColors[i * 4 + 0] = 0.2f; // R
         myAquariumColors[i * 4 + 1] = 0.5f; // G
         myAquariumColors[i * 4 + 2] = 1.0f; // B
-        myAquariumColors[i * 4 + 3] = 0.3f; // A (alpha dla przezroczystoœci)
+        myAquariumColors[i * 4 + 3] = 1.0f; // A (alpha dla przezroczystoœci)
     }
 }
 
@@ -445,8 +445,6 @@ void drawAquarium(ShaderProgram* spTextured, GLuint tex, const glm::mat4& parent
     M_local = glm::translate(M_local, position);
     M_local = glm::rotate(M_local, localRotationAngleY, glm::vec3(0.0f, 1.0f, 0.0f)); // Obróæ wokó³ osi Y
     M_local = glm::scale(M_local, glm::vec3(scale, scale, scale)); // Skaluj jednolicie
-    glUniform4f(spTextured->u("lp"), 0, 0, 0, 1);
-    glUniform1i(spTextured->u("textureMap0"), 0); //drawScene
     // 2. Po³¹cz lokaln¹ macierz z macierz¹ "rodzica"
     glm::mat4 M_final = parentModelMatrix * M_local;
 
@@ -468,9 +466,7 @@ void drawAquarium(ShaderProgram* spTextured, GLuint tex, const glm::mat4& parent
     glBindTexture(GL_TEXTURE_2D, tex);
 
     // glDepthMask jest specyficzne dla tego obiektu
-    glDepthMask(GL_FALSE);
     glDrawArrays(GL_TRIANGLES, 0, myAquariumVertexCount);
-    glDepthMask(GL_TRUE);
 
     glDisableVertexAttribArray(spTextured->a("vertex"));
     glDisableVertexAttribArray(spTextured->a("texCoord0"));
@@ -504,8 +500,6 @@ void drawWater(ShaderProgram* spWater, GLuint texWater, const glm::mat4& parentM
 
     // 2. Przeœlij wynikow¹ macierz Modelu (M_final) do shadera wody
     glUniformMatrix4fv(spWater->u("M"), 1, false, glm::value_ptr(M_final));
-    glUniform4f(spWater->u("lp"), 0, 0, 0, 1);
-    glUniform1i(spWater->u("textureMap0"), 0); //drawScene
     // 3. Logika rysowania wody
     glEnableVertexAttribArray(spWater->a("vertex")); // U¿yj nazw atrybutów ze swojego shadera wody
     glVertexAttribPointer(spWater->a("vertex"), 4, GL_FLOAT, false, 0, myWaterVertices);
@@ -517,25 +511,8 @@ void drawWater(ShaderProgram* spWater, GLuint texWater, const glm::mat4& parentM
     glActiveTexture(GL_TEXTURE0); // Aktywuj jednostkê teksturuj¹c¹
     glBindTexture(GL_TEXTURE_2D, texWater); // Zbinduj teksturê wody
 
-    // Woda jest zazwyczaj pó³przezroczysta.
-    // Upewnij siê, ¿e blendowanie jest w³¹czone przed rysowaniem wody
-    // i potencjalnie wy³¹czone po, jeœli inne obiekty nie s¹ przezroczyste.
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Typowe ustawienie dla przezroczystoœci
-
-    // Dla wody, glDepthMask(GL_FALSE) jest czêsto u¿ywane, aby inne przezroczyste
-    // obiekty za wod¹ by³y poprawnie renderowane, ale powierzchnia wody
-    // powinna zapisywaæ do bufora g³êbi, jeœli jest nieprzezroczysta lub ostatnia.
-    // Jeœli woda jest pó³przezroczysta i chcesz widzieæ przez ni¹ dno akwarium,
-    // byæ mo¿e bêdziesz chcia³ rysowaæ akwarium (szk³o) po wodzie,
-    // lub u¿yæ glDepthMask(GL_TRUE) dla wody i sortowaæ obiekty.
-    // Twoja funkcja drawAquarium u¿ywa glDepthMask(GL_FALSE) -> glDepthMask(GL_TRUE).
-    // Dla wody, jeœli jest rysowana przed szk³em i ma byæ widoczna przez szk³o:
-    // glDepthMask(GL_TRUE); // Woda powinna normalnie zapisywaæ do bufora g³êbi
-
     glDrawArrays(GL_TRIANGLES, 0, myWaterVertexCount);
 
-    glDisable(GL_BLEND); // Jeœli by³o w³¹czone tylko dla wody
 
     glDisableVertexAttribArray(spWater->a("vertex"));
     glDisableVertexAttribArray(spWater->a("texCoord0"));

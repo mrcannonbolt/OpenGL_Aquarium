@@ -156,8 +156,6 @@ void drawStone(ShaderProgram* spStone, GLuint texStone,
     glm::mat4 M_final = parentModelMatrix * M_local;
 
     glUniformMatrix4fv(spStone->u("M"), 1, false, glm::value_ptr(M_final));
-    glUniform4f(spStone->u("lp"), 0, 0, 0, 1);
-    glUniform1i(spStone->u("textureMap0"), 0); //drawScene
     // Obliczenie i przes³anie macierzy normalnych.
     // Jest to kluczowe, aby wektory normalne obróci³y siê prawid³owo razem z modelem.
     //glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(M_final)));

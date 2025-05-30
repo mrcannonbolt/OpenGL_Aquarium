@@ -126,8 +126,6 @@ void drawMyFish(ShaderProgram* sp, GLuint tex, const glm::mat4& parentModelMatri
     // Obliczenie i przes³anie macierzy normalnych (kluczowe dla oœwietlenia przy skalowaniu!)
     //glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(M_final)));
     //glUniformMatrix3fv(sp->u("normalMatrix"), 1, false, glm::value_ptr(normalMatrix));
-    glUniform4f(sp->u("lp"), 0, 0, 0, 1);
-    glUniform1i(sp->u("textureMap0"), 0); //drawScene
     // Przes³anie atrybutów wierzcho³ków
     glEnableVertexAttribArray(sp->a("vertex"));
     glVertexAttribPointer(sp->a("vertex"), 4, GL_FLOAT, false, 0, myFishVertices);

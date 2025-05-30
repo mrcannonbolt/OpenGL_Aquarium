@@ -1,16 +1,14 @@
-#include "myAlgae.h" // Upewnij siê, ¿e œcie¿ka jest poprawna
+#include "myAlgae.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <random> // Dla std::mt19937, std::uniform_real_distribution
+#include <random>
 
 // --- DEFINICJE STA£YCH I DANYCH WIERZCHO£KÓW ---
-// Te definicje powinny ju¿ istnieæ z poprzednich kroków
 const float ALGAE_BLADE_WIDTH = 0.08f;
 const float ALGAE_BLADE_BASE_HEIGHT = 0.7f;
 const int ALGAE_BLADE_VERTEX_COUNT = 6;
 
 const float algaeBladeVertices[ALGAE_BLADE_VERTEX_COUNT * 4] = {
-    // ... (tak jak poprzednio) ...
     -ALGAE_BLADE_WIDTH / 2.0f, 0.0f,                    0.0f, 1.0f,
      ALGAE_BLADE_WIDTH / 2.0f, 0.0f,                    0.0f, 1.0f,
      ALGAE_BLADE_WIDTH / 2.0f, ALGAE_BLADE_BASE_HEIGHT, 0.0f, 1.0f,
@@ -20,7 +18,6 @@ const float algaeBladeVertices[ALGAE_BLADE_VERTEX_COUNT * 4] = {
 };
 
 const float algaeBladeTexCoords[ALGAE_BLADE_VERTEX_COUNT * 2] = {
-    // ... (tak jak poprzednio) ...
     0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
     0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f
 };
@@ -35,14 +32,13 @@ const float algaeBladeNormals[ALGAE_BLADE_VERTEX_COUNT * 3] = {
 };
 
 // Funkcja pomocnicza do generowania liczb losowych
-// Mo¿e byæ statyczna w tym pliku .cpp, jeœli nie jest potrzebna gdzie indziej.
 static float randomFloat(float min, float max) {
     static std::mt19937 gen(std::random_device{}());
     std::uniform_real_distribution<float> dist(min, max);
     return dist(gen);
 }
 
-// --- IMPLEMENTACJA FUNKCJI ---
+// --- IMPLEMENTACJE FUNKCJI ---
 
 AlgaeGroupData initializeAlgaeGroup(
     const glm::vec3& groupCenterPosXZ,
@@ -61,7 +57,7 @@ AlgaeGroupData initializeAlgaeGroup(
         AlgaeBladeInstanceData blade;
 
         blade.basePositionOffset.x = randomFloat(-maxSpreadRadius, maxSpreadRadius);
-        blade.basePositionOffset.y = 0.0f; // Y jest czêœci¹ waterBottomLevelY, pozycja ostrza jest na tym poziomie
+        blade.basePositionOffset.y = 0.0f;
         blade.basePositionOffset.z = randomFloat(-maxSpreadRadius, maxSpreadRadius);
 
         blade.rotationY = randomFloat(0.0f, 2.0f * glm::pi<float>());
@@ -72,7 +68,7 @@ AlgaeGroupData initializeAlgaeGroup(
             blade.tiltAxis = glm::normalize(blade.tiltAxis);
         }
         else {
-            blade.tiltAxis = glm::vec3(1.0f, 0.0f, 0.0f); // Domyœlna oœ, jeœli losowa jest (0,0,0)
+            blade.tiltAxis = glm::vec3(1.0f, 0.0f, 0.0f); // Domyœlna oœ
         }
 
         blade.heightScale = randomFloat(minHeightFactor, maxHeightFactor);
@@ -88,23 +84,18 @@ void renderAlgaeGroup(
     const glm::mat4& M_aquariumTransform,
     const AlgaeGroupData& groupData)
 {
-    glUniform4f(spAlgae->u("lp"), 0, 0, 0, 1);
-    glUniform1i(spAlgae->u("textureMap0"), 0); //drawScene
     glEnableVertexAttribArray(spAlgae->a("vertex"));
     glVertexAttribPointer(spAlgae->a("vertex"), 4, GL_FLOAT, false, 0, algaeBladeVertices);
 
     glEnableVertexAttribArray(spAlgae->a("texCoord0"));
     glVertexAttribPointer(spAlgae->a("texCoord0"), 2, GL_FLOAT, false, 0, algaeBladeTexCoords);
 
-    glEnableVertexAttribArray(spAlgae->a("normal")); // Za³ó¿my, ¿e atrybut w shaderze nazywa siê "normal"
+    glEnableVertexAttribArray(spAlgae->a("normal"));
     glVertexAttribPointer(spAlgae->a("normal"), 3, GL_FLOAT, false, 0, algaeBladeNormals);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texAlgae);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDepthMask(GL_FALSE);
 
     for (const auto& blade : groupData.blades) {
         glm::mat4 M_singleAlgaeLocal = glm::mat4(1.0f);
@@ -119,14 +110,14 @@ void renderAlgaeGroup(
 
         // 2. Orientacja: U¿ywamy pre-generowanych wartoœci
         M_singleAlgaeLocal = glm::rotate(M_singleAlgaeLocal, blade.rotationY, glm::vec3(0.0f, 1.0f, 0.0f));
-        if (blade.tiltAngle != 0.0f) { // SprawdŸ, czy jest co obracaæ
+        if (blade.tiltAngle != 0.0f) {
             M_singleAlgaeLocal = glm::rotate(M_singleAlgaeLocal, blade.tiltAngle, blade.tiltAxis);
         }
 
         // 3. Skala: U¿ywamy pre-generowanej wartoœci
         M_singleAlgaeLocal = glm::scale(M_singleAlgaeLocal, glm::vec3(1.0f, blade.heightScale, 1.0f));
 
-        // Macierz modelu dla tego konkretnego "ostrza" glonu
+        // Macierz modelu dla tego konkretnego glonu
         glm::mat4 M_final_singleAlgae = M_aquariumTransform * M_singleAlgaeLocal;
         glUniformMatrix4fv(spAlgae->u("M"), 1, false, glm::value_ptr(M_final_singleAlgae));
 
@@ -137,6 +128,4 @@ void renderAlgaeGroup(
     glDisableVertexAttribArray(spAlgae->a("texCoord0"));
     glDisableVertexAttribArray(spAlgae->a("normal"));
 
-    glDisable(GL_BLEND);
-    glDepthMask(GL_TRUE);
 }
